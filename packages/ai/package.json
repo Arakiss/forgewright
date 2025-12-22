@@ -18,6 +18,8 @@
     "@ai-sdk/google": "catalog:",
     "@ai-sdk/xai": "catalog:",
     "@ai-sdk/mistral": "catalog:",
+    "@ai-sdk/openai-compatible": "catalog:",
+    "ollama-ai-provider-v2": "^1.1.3",
     "zod": "catalog:"
   },
   "devDependencies": {

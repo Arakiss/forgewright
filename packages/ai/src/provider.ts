@@ -2,9 +2,11 @@ import { createAnthropic } from "@ai-sdk/anthropic";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { createMistral } from "@ai-sdk/mistral";
 import { createOpenAI } from "@ai-sdk/openai";
+import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import { createXai } from "@ai-sdk/xai";
 import type { AIProvider } from "@forgewright/core";
 import type { LanguageModel } from "ai";
+import { createOllama } from "ollama-ai-provider-v2";
 
 export interface AIProviderConfig {
   provider: AIProvider;
@@ -72,13 +74,12 @@ const PROVIDER_FACTORIES: Record<AIProvider, ProviderFactory> = {
     return (modelId) => client(modelId);
   },
 
-  // Ollama exposes an OpenAI-compatible API at /v1
+  // Ollama uses the native Ollama API via ollama-ai-provider-v2
   ollama: (config) => {
-    const client = createOpenAI({
-      baseURL: config.baseURL ?? process.env.OLLAMA_BASE_URL ?? "http://127.0.0.1:11434/v1",
-      apiKey: "ollama", // Ollama doesn't require a real API key
-    });
-    return (modelId) => client(modelId);
+    const baseURL = config.baseURL ?? process.env.OLLAMA_BASE_URL ?? "http://127.0.0.1:11434/api";
+    const client = createOllama({ baseURL });
+    // Cast needed due to minor version differences in @ai-sdk/provider
+    return (modelId) => client(modelId) as unknown as LanguageModel;
   },
 
   // For Groq, Together.ai, LM Studio, or any OpenAI-compatible API
@@ -86,11 +87,13 @@ const PROVIDER_FACTORIES: Record<AIProvider, ProviderFactory> = {
     if (!config.baseURL) {
       throw new Error("baseURL is required for openai-compatible provider");
     }
-    const client = createOpenAI({
-      apiKey: config.apiKey ?? process.env.OPENAI_API_KEY,
+    const client = createOpenAICompatible({
+      name: "custom",
       baseURL: config.baseURL,
+      apiKey: config.apiKey ?? process.env.OPENAI_API_KEY ?? "",
     });
-    return (modelId) => client(modelId);
+    // Cast needed due to minor version differences in @ai-sdk/provider
+    return (modelId) => client(modelId) as unknown as LanguageModel;
   },
 };
 
