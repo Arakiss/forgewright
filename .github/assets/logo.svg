@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="90" fill="url(#grad)" />
+
+  <!-- Anvil shape -->
+  <path d="M50 130 L60 90 L140 90 L150 130 L130 130 L130 150 L70 150 L70 130 Z"
+        fill="#1e1b4b" opacity="0.9"/>
+
+  <!-- Hammer -->
+  <rect x="90" y="50" width="20" height="50" rx="3" fill="#fbbf24"/>
+  <rect x="75" y="40" width="50" height="15" rx="4" fill="#f59e0b"/>
+
+  <!-- Sparks -->
+  <circle cx="60" cy="80" r="3" fill="#fbbf24" opacity="0.8"/>
+  <circle cx="145" cy="75" r="2" fill="#fbbf24" opacity="0.6"/>
+  <circle cx="55" cy="95" r="2" fill="#f59e0b" opacity="0.7"/>
+  <circle cx="150" cy="88" r="2.5" fill="#fbbf24" opacity="0.9"/>
+</svg>
