@@ -1,9 +1,9 @@
 import type { Commit, ReadinessScore, VersionBump, WorkUnit } from "@forgewright/core";
 import { ReadinessScoreSchema, WorkUnitSchema } from "@forgewright/core";
-import { generateObject } from "ai";
 import type { LanguageModelV1 } from "ai";
+import { generateObject } from "ai";
 import { z } from "zod";
-import { SYSTEM_PROMPT, buildReadinessPrompt, buildWorkUnitPrompt } from "./prompts";
+import { buildReadinessPrompt, buildWorkUnitPrompt, SYSTEM_PROMPT } from "./prompts";
 
 export interface AnalyzerOptions {
   model: LanguageModelV1;

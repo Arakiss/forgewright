@@ -1,8 +1,8 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.0/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.3.10/schema.json",
   "files": {
     "ignoreUnknown": true,
-    "ignore": ["**/node_modules", "**/dist", "**/bun.lock"]
+    "includes": ["**", "!**/node_modules", "!**/dist", "!**/bun.lock"]
   },
   "vcs": {
     "enabled": true,
@@ -10,9 +10,7 @@
     "defaultBranch": "main",
     "useIgnoreFile": true
   },
-  "organizeImports": {
-    "enabled": true
-  },
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "linter": {
     "enabled": true,
     "rules": {

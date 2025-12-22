@@ -235,6 +235,20 @@ Forgewright is named after the craftspeople who build ships — emphasizing **ca
 | `@forgewright/ai` | AI analysis, work units, changelog generation |
 | `@forgewright/cli` | CLI and GitHub integration |
 
+## Minimal Dependencies
+
+Forgewright is built with **only 5 runtime dependencies** — everything else is ad-hoc TypeScript:
+
+| Dependency | Purpose |
+|------------|---------|
+| `zod` | Schema validation |
+| `ai` | Vercel AI SDK core |
+| `@ai-sdk/anthropic` | Claude provider |
+| `@ai-sdk/openai` | GPT-4 provider |
+| `@ai-sdk/google` | Gemini provider |
+
+All git operations, config loading, changelog formatting, CLI output, and GitHub integration are implemented from scratch using Bun's native APIs. No `execa`, `chalk`, `commander`, `inquirer`, or `octokit` — just TypeScript.
+
 ## Contributing
 
 Forgewright releases itself using Forgewright (dogfooding from day 1).

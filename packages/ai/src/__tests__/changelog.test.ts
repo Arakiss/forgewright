@@ -37,7 +37,7 @@ const mockCommits: Commit[] = [
   },
 ];
 
-const mockWorkUnits: WorkUnit[] = [
+const _mockWorkUnits: WorkUnit[] = [
   {
     id: "wu-1",
     name: "Authentication",

@@ -2,11 +2,11 @@ import { describe, expect, test } from "bun:test";
 import {
   type AIProvider,
   AIProviderSchema,
+  defineConfig,
   type ForgewrightConfig,
   ForgewrightConfigSchema,
-  ReleaseModeSchema,
-  defineConfig,
   getDefaultConfig,
+  ReleaseModeSchema,
 } from "../config";
 
 describe("AIProviderSchema", () => {

@@ -1,7 +1,7 @@
 import type { Commit, WorkUnit } from "@forgewright/core";
-import { generateText } from "ai";
 import type { LanguageModelV1 } from "ai";
-import { SYSTEM_PROMPT, buildChangelogPrompt } from "./prompts";
+import { generateText } from "ai";
+import { buildChangelogPrompt, SYSTEM_PROMPT } from "./prompts";
 
 export interface ChangelogOptions {
   model: LanguageModelV1;

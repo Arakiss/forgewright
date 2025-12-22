@@ -1,11 +1,11 @@
 import { Analyzer, ChangelogGenerator, getModel } from "@forgewright/ai";
 import {
+  bumpVersion,
   type ForgewrightConfig,
   Git,
+  loadConfig,
   type ReadinessScore,
   type WorkUnit,
-  bumpVersion,
-  loadConfig,
 } from "@forgewright/core";
 import { GitHub } from "./github";
 

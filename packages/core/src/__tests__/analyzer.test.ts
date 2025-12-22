@@ -1,13 +1,13 @@
 import { describe, expect, test } from "bun:test";
 import {
+  bumpVersion,
+  parseVersion,
   type ReadinessScore,
   ReadinessScoreSchema,
   VersionBumpSchema,
   type WorkUnit,
   WorkUnitSchema,
   WorkUnitStatusSchema,
-  bumpVersion,
-  parseVersion,
 } from "../analyzer";
 
 describe("WorkUnitStatusSchema", () => {

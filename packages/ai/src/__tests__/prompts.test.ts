@@ -1,10 +1,10 @@
 import { describe, expect, test } from "bun:test";
 import type { Commit, WorkUnit } from "@forgewright/core";
 import {
-  SYSTEM_PROMPT,
   buildChangelogPrompt,
   buildReadinessPrompt,
   buildWorkUnitPrompt,
+  SYSTEM_PROMPT,
 } from "../prompts";
 
 // Test fixtures
