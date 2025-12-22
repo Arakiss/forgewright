@@ -85,5 +85,39 @@ describe("AIProviderConfig type", () => {
   });
 });
 
-// Note: getModel is not tested directly because it requires valid API keys
-// and makes real SDK calls. Integration tests would cover this.
+describe("getModel", () => {
+  const { getModel } = require("../provider");
+
+  test("should return a model object for anthropic", () => {
+    const model = getModel({ provider: "anthropic", apiKey: "test-key" });
+    expect(model).toBeDefined();
+    expect(typeof model).toBe("object");
+  });
+
+  test("should return a model object for openai", () => {
+    const model = getModel({ provider: "openai", apiKey: "test-key" });
+    expect(model).toBeDefined();
+    expect(typeof model).toBe("object");
+  });
+
+  test("should return a model object for google", () => {
+    const model = getModel({ provider: "google", apiKey: "test-key" });
+    expect(model).toBeDefined();
+    expect(typeof model).toBe("object");
+  });
+
+  test("should use custom model when provided", () => {
+    const model = getModel({
+      provider: "anthropic",
+      model: "claude-3-haiku-20240307",
+      apiKey: "test-key",
+    });
+    expect(model).toBeDefined();
+  });
+
+  test("should throw for unsupported provider", () => {
+    expect(() => {
+      getModel({ provider: "invalid-provider" });
+    }).toThrow("Unsupported AI provider");
+  });
+});

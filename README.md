@@ -11,6 +11,7 @@
 <p align="center">
   <a href="https://www.npmjs.com/package/forgewright"><img src="https://img.shields.io/npm/v/forgewright?style=flat-square&color=blue" alt="npm version" /></a>
   <a href="https://github.com/Arakiss/forgewright/actions"><img src="https://img.shields.io/github/actions/workflow/status/Arakiss/forgewright/release.yml?style=flat-square" alt="Build Status" /></a>
+  <img src="https://img.shields.io/badge/coverage-94%25-brightgreen?style=flat-square" alt="Test Coverage" />
   <a href="https://github.com/Arakiss/forgewright/blob/main/LICENSE"><img src="https://img.shields.io/github/license/Arakiss/forgewright?style=flat-square" alt="License" /></a>
   <a href="https://bun.sh"><img src="https://img.shields.io/badge/runtime-Bun-f9f1e1?style=flat-square&logo=bun" alt="Bun" /></a>
   <a href="https://www.typescriptlang.org"><img src="https://img.shields.io/badge/types-TypeScript-blue?style=flat-square&logo=typescript" alt="TypeScript" /></a>

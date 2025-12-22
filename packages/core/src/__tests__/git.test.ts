@@ -262,17 +262,47 @@ describe("Git additional methods", () => {
     });
   });
 
+  describe("getFileDiff", () => {
+    test("should return diff for specific file", async () => {
+      const commits = await git.getCommits();
+      if (commits.length >= 2 && commits[0].files.length > 0) {
+        const from = commits[commits.length - 1].hash;
+        const to = commits[0].hash;
+        const file = commits[0].files[0];
+        const diff = await git.getFileDiff(file, from, to);
+        expect(typeof diff).toBe("string");
+      }
+    });
+
+    test("should default to HEAD for 'to' parameter", async () => {
+      const commits = await git.getCommits();
+      if (commits.length >= 2 && commits[0].files.length > 0) {
+        const from = commits[commits.length - 1].hash;
+        const file = commits[0].files[0];
+        const diff = await git.getFileDiff(file, from);
+        expect(typeof diff).toBe("string");
+      }
+    });
+  });
+
   describe("createTag", () => {
-    // Note: We can't actually create tags in tests without cleanup
-    // This just tests the method signature exists
     test("should have createTag method", () => {
       expect(typeof git.createTag).toBe("function");
+    });
+
+    test("createTag should accept name and optional message", () => {
+      // Type check - method signature accepts (name: string, message?: string)
+      expect(git.createTag.length).toBeGreaterThanOrEqual(1);
     });
   });
 
   describe("pushTag", () => {
     test("should have pushTag method", () => {
       expect(typeof git.pushTag).toBe("function");
+    });
+
+    test("pushTag should accept tag name", () => {
+      expect(git.pushTag.length).toBeGreaterThanOrEqual(1);
     });
   });
 });

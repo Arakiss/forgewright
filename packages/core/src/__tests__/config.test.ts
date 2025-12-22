@@ -6,6 +6,7 @@ import {
   type ForgewrightConfig,
   ForgewrightConfigSchema,
   getDefaultConfig,
+  loadConfig,
   ReleaseModeSchema,
 } from "../config";
 
@@ -227,6 +228,26 @@ describe("getDefaultConfig", () => {
     for (const provider of providers) {
       const config = getDefaultConfig(provider);
       expect(() => ForgewrightConfigSchema.parse(config)).not.toThrow();
+    }
+  });
+});
+
+describe("loadConfig", () => {
+  test("should be a function", () => {
+    expect(typeof loadConfig).toBe("function");
+  });
+
+  test("should return null for non-existent config", async () => {
+    const result = await loadConfig("/tmp/non-existent-directory-12345");
+    expect(result).toBeNull();
+  });
+
+  test("should load config from current directory if exists", async () => {
+    // This tests the actual project's config
+    const result = await loadConfig(process.cwd());
+    // May or may not exist depending on test environment
+    if (result) {
+      expect(result.ai.provider).toBeDefined();
     }
   });
 });

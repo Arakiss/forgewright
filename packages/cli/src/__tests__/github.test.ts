@@ -154,12 +154,29 @@ describe("GitHub", () => {
   });
 
   describe("ghCliAvailable", () => {
-    // This test depends on whether gh CLI is installed
     test("should return boolean", async () => {
       const gh = new GitHub();
       const result = await gh.ghCliAvailable();
       expect(typeof result).toBe("boolean");
     });
+  });
+
+  describe("getLatestRelease", () => {
+    test("should be a function", () => {
+      const gh = new GitHub();
+      expect(typeof gh.getLatestRelease).toBe("function");
+    });
+
+    // Note: Actual API calls are tested in integration tests
+  });
+
+  describe("createReleaseWithCLI", () => {
+    test("should be a function", () => {
+      const gh = new GitHub();
+      expect(typeof gh.createReleaseWithCLI).toBe("function");
+    });
+
+    // Note: Actual CLI calls are tested in integration tests
   });
 });
 
