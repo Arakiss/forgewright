@@ -1,9 +1,15 @@
-import { Analyzer, ChangelogGenerator, getModel } from "@forgewright/ai";
+import {
+  Analyzer,
+  ChangelogGenerator,
+  getApiKeyEnvVar,
+  getModel,
+  hasApiKey,
+} from "@forgewright/ai";
 import {
   bumpVersion,
   type ForgewrightConfig,
   Git,
-  loadConfig,
+  loadConfigWithDetails,
   type ReadinessScore,
   type WorkUnit,
 } from "@forgewright/core";
@@ -32,10 +38,29 @@ export interface ReleaseResult {
 }
 
 export async function createEngine(cwd: string = process.cwd()): Promise<EngineContext> {
-  const config = await loadConfig(cwd);
+  const result = await loadConfigWithDetails(cwd);
 
-  if (!config) {
-    throw new Error("No forgewright.config.ts found. Run 'forgewright init' first.");
+  if (!result.success) {
+    switch (result.error) {
+      case "not_found":
+        throw new Error("No forgewright.config.ts found. Run 'forgewright init' first.");
+      case "parse_error":
+        throw new Error(`Failed to parse config file: ${result.details ?? "Unknown error"}`);
+      case "validation_error":
+        throw new Error(`Invalid configuration:\n${result.details ?? "Unknown validation error"}`);
+      default:
+        throw new Error("Failed to load configuration");
+    }
+  }
+
+  const config = result.config;
+
+  // Validate API key before creating model
+  if (!hasApiKey(config.ai.provider)) {
+    const envVar = getApiKeyEnvVar(config.ai.provider);
+    throw new Error(
+      `Missing API key for ${config.ai.provider}. Set the ${envVar} environment variable.`,
+    );
   }
 
   const model = getModel({
@@ -80,9 +105,14 @@ export async function analyze(ctx: EngineContext): Promise<AnalysisResult> {
   // Detect work units (no persistence, always recalculate)
   const workUnits = await ctx.analyzer.detectWorkUnits(commits);
 
+  // Check CI status via GitHub API
+  const repo = await ctx.github.parseRepoFromRemote(ctx.git);
+  const branch = await ctx.git.getCurrentBranch();
+  const ciStatus = repo ? await ctx.github.getWorkflowStatus(repo, branch) : "unknown";
+  // Consider "unknown" as passing (repo might not use GitHub Actions)
+  const ciPassing = ciStatus === "success" || ciStatus === "unknown";
+
   // Evaluate readiness
-  // TODO: Check CI status via GitHub API
-  const ciPassing = true;
   const readiness = await ctx.analyzer.evaluateReadiness(
     commits,
     workUnits,
