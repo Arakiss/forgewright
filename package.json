@@ -13,11 +13,17 @@
   },
   "scripts": {
     "build": "bun run --filter '*' build",
-    "test": "bun test",
+    "test": "bun test --coverage",
+    "test:watch": "bun test --watch",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
     "typecheck": "tsc --noEmit",
-    "forgewright": "bun run packages/cli/src/index.ts"
+    "forgewright": "bun run packages/cli/src/index.ts",
+    "prepare": "node scripts/setup-hooks.cjs"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.9.0",
     "typescript": "catalog:",
     "@types/bun": "latest"
   }

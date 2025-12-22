@@ -1,10 +1,5 @@
-import { parseArgs } from "util";
-import {
-  createEngine,
-  analyze,
-  generateChangelog,
-  executeRelease,
-} from "../engine";
+import { parseArgs } from "node:util";
+import { analyze, createEngine, executeRelease, generateChangelog } from "../engine";
 import * as out from "../output";
 
 export async function release(args: string[]): Promise<void> {
@@ -51,7 +46,9 @@ export async function release(args: string[]): Promise<void> {
       out.log(out.bold("Release Summary"));
       out.log(out.dim("─".repeat(40)));
       out.log(`Version: ${out.green(version)}`);
-      out.log(`Work Units: ${analysis.workUnits.filter((u) => u.status === "complete").length} complete`);
+      out.log(
+        `Work Units: ${analysis.workUnits.filter((u) => u.status === "complete").length} complete`,
+      );
       out.log("");
       out.log(out.bold("Changelog Preview:"));
       out.log(out.dim("─".repeat(40)));

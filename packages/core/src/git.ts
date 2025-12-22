@@ -42,9 +42,7 @@ export class Git {
     const FIELD_SEP = "<<FIELD>>";
     const format = `${DELIM}%H${FIELD_SEP}%h${FIELD_SEP}%s${FIELD_SEP}%b${FIELD_SEP}%an${FIELD_SEP}%ae${FIELD_SEP}%aI`;
 
-    const result = await $`git log ${range} --format=${format} --name-only`
-      .cwd(this.cwd)
-      .text();
+    const result = await $`git log ${range} --format=${format} --name-only`.cwd(this.cwd).text();
 
     if (!result.trim()) return [];
 
@@ -61,12 +59,11 @@ export class Git {
 
       // dateAndFiles contains the date followed by newlines and file names
       const dateEndIndex = (dateAndFiles ?? "").indexOf("\n");
-      const dateStr = dateEndIndex >= 0
-        ? (dateAndFiles ?? "").slice(0, dateEndIndex)
-        : (dateAndFiles ?? "").trim();
-      const filesPart = dateEndIndex >= 0
-        ? (dateAndFiles ?? "").slice(dateEndIndex)
-        : "";
+      const dateStr =
+        dateEndIndex >= 0
+          ? (dateAndFiles ?? "").slice(0, dateEndIndex)
+          : (dateAndFiles ?? "").trim();
+      const filesPart = dateEndIndex >= 0 ? (dateAndFiles ?? "").slice(dateEndIndex) : "";
 
       const files = filesPart
         .split("\n")
@@ -98,9 +95,7 @@ export class Git {
       if (!trimmedName) return null;
 
       const hash = await $`git rev-list -n 1 ${trimmedName}`.cwd(this.cwd).text();
-      const dateStr = await $`git log -1 --format=%aI ${trimmedName}`
-        .cwd(this.cwd)
-        .text();
+      const dateStr = await $`git log -1 --format=%aI ${trimmedName}`.cwd(this.cwd).text();
 
       return {
         name: trimmedName,
@@ -114,9 +109,10 @@ export class Git {
 
   async getAllTags(): Promise<Tag[]> {
     try {
-      const result = await $`git tag --sort=-creatordate --format="%(refname:short)|%(objectname)|%(creatordate:iso)"`
-        .cwd(this.cwd)
-        .text();
+      const result =
+        await $`git tag --sort=-creatordate --format="%(refname:short)|%(objectname)|%(creatordate:iso)"`
+          .cwd(this.cwd)
+          .text();
 
       if (!result.trim()) return [];
 
@@ -136,11 +132,11 @@ export class Git {
     }
   }
 
-  async getDiff(from: string, to: string = "HEAD"): Promise<string> {
+  async getDiff(from: string, to = "HEAD"): Promise<string> {
     return $`git diff ${from}..${to}`.cwd(this.cwd).text();
   }
 
-  async getFileDiff(file: string, from: string, to: string = "HEAD"): Promise<string> {
+  async getFileDiff(file: string, from: string, to = "HEAD"): Promise<string> {
     return $`git diff ${from}..${to} -- ${file}`.cwd(this.cwd).text();
   }
 

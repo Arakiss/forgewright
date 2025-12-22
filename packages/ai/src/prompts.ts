@@ -34,7 +34,7 @@ export function buildReadinessPrompt(
   commits: Commit[],
   workUnits: WorkUnit[],
   currentVersion: string,
-  ciPassing: boolean
+  ciPassing: boolean,
 ): string {
   const unitSummary = workUnits
     .map((u) => `- ${u.name} (${u.status}, ${u.value} value, ${u.commits.length} commits)`)
@@ -67,7 +67,7 @@ Return as JSON.`;
 export function buildChangelogPrompt(
   workUnits: WorkUnit[],
   commits: Commit[],
-  version: string
+  version: string,
 ): string {
   const unitDetails = workUnits
     .filter((u) => u.status === "complete")

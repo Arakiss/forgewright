@@ -1,5 +1,5 @@
-import { parseArgs } from "util";
-import { createEngine, analyze, generateChangelog } from "../engine";
+import { parseArgs } from "node:util";
+import { analyze, createEngine, generateChangelog } from "../engine";
 import * as out from "../output";
 
 export async function preview(args: string[]): Promise<void> {
@@ -21,11 +21,7 @@ export async function preview(args: string[]): Promise<void> {
       return;
     }
 
-    const changelog = await generateChangelog(
-      engine,
-      analysis,
-      analysis.suggestedVersion
-    );
+    const changelog = await generateChangelog(engine, analysis, analysis.suggestedVersion);
 
     spin.stop();
 

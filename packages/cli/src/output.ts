@@ -62,7 +62,7 @@ export const icons = {
 export function box(content: string[], title?: string): string {
   const maxLen = Math.max(
     ...content.map((l) => stripAnsi(l).length),
-    title ? stripAnsi(title).length + 2 : 0
+    title ? stripAnsi(title).length + 2 : 0,
   );
   const width = maxLen + 2;
 
@@ -80,7 +80,7 @@ export function box(content: string[], title?: string): string {
 }
 
 function stripAnsi(str: string): string {
-  // eslint-disable-next-line no-control-regex
+  // biome-ignore lint/suspicious/noControlCharactersInRegex: ANSI escape codes require control characters
   return str.replace(/\x1b\[[0-9;]*m/g, "");
 }
 
@@ -120,7 +120,7 @@ export function spinner(text: string): { stop: (final?: string) => void } {
   return {
     stop(final?: string) {
       clearInterval(interval);
-      process.stdout.write("\r" + " ".repeat(text.length + 3) + "\r");
+      process.stdout.write(`\r${" ".repeat(text.length + 3)}\r`);
       if (final) log(final);
     },
   };

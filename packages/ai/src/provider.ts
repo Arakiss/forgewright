@@ -1,8 +1,8 @@
 import { createAnthropic } from "@ai-sdk/anthropic";
-import { createOpenAI } from "@ai-sdk/openai";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
-import type { LanguageModelV1 } from "ai";
+import { createOpenAI } from "@ai-sdk/openai";
 import type { AIProvider } from "@forgewright/core";
+import type { LanguageModelV1 } from "ai";
 
 export interface AIProviderConfig {
   provider: AIProvider;
@@ -22,7 +22,10 @@ const API_KEY_ENV_VARS: Record<AIProvider, string> = {
   google: "GOOGLE_API_KEY",
 };
 
-const PROVIDER_FACTORIES: Record<AIProvider, (apiKey?: string) => (modelId: string) => LanguageModelV1> = {
+const PROVIDER_FACTORIES: Record<
+  AIProvider,
+  (apiKey?: string) => (modelId: string) => LanguageModelV1
+> = {
   anthropic: (apiKey) => {
     const client = createAnthropic({ apiKey: apiKey ?? process.env.ANTHROPIC_API_KEY });
     return (modelId) => client(modelId);

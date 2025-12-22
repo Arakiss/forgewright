@@ -1,6 +1,6 @@
+import type { Commit, WorkUnit } from "@forgewright/core";
 import { generateText } from "ai";
 import type { LanguageModelV1 } from "ai";
-import type { Commit, WorkUnit } from "@forgewright/core";
 import { SYSTEM_PROMPT, buildChangelogPrompt } from "./prompts";
 
 export interface ChangelogOptions {
@@ -14,11 +14,7 @@ export class ChangelogGenerator {
     this.model = options.model;
   }
 
-  async generate(
-    workUnits: WorkUnit[],
-    commits: Commit[],
-    version: string
-  ): Promise<string> {
+  async generate(workUnits: WorkUnit[], commits: Commit[], version: string): Promise<string> {
     const completeUnits = workUnits.filter((u) => u.status === "complete");
 
     if (completeUnits.length === 0) {
@@ -46,7 +42,7 @@ export class ChangelogGenerator {
     const features = commits.filter((c) => c.message.startsWith("feat"));
     const fixes = commits.filter((c) => c.message.startsWith("fix"));
     const others = commits.filter(
-      (c) => !c.message.startsWith("feat") && !c.message.startsWith("fix")
+      (c) => !c.message.startsWith("feat") && !c.message.startsWith("fix"),
     );
 
     const sections: string[] = [`## ${version} - ${date}`];
@@ -69,22 +65,13 @@ export class ChangelogGenerator {
     return sections.join("");
   }
 
-  async updateChangelogFile(
-    existingContent: string,
-    newEntry: string
-  ): Promise<string> {
+  async updateChangelogFile(existingContent: string, newEntry: string): Promise<string> {
     // Insert new entry after the header
     const headerMatch = existingContent.match(/^#\s+Changelog\s*\n/i);
 
     if (headerMatch) {
       const insertPos = headerMatch[0].length;
-      return (
-        existingContent.slice(0, insertPos) +
-        "\n" +
-        newEntry +
-        "\n" +
-        existingContent.slice(insertPos)
-      );
+      return `${existingContent.slice(0, insertPos)}\n${newEntry}\n${existingContent.slice(insertPos)}`;
     }
 
     // No header found, prepend

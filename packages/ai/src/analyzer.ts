@@ -1,9 +1,9 @@
+import type { Commit, ReadinessScore, VersionBump, WorkUnit } from "@forgewright/core";
+import { ReadinessScoreSchema, WorkUnitSchema } from "@forgewright/core";
 import { generateObject } from "ai";
-import { z } from "zod";
-import type { Commit, WorkUnit, ReadinessScore, VersionBump } from "@forgewright/core";
-import { WorkUnitSchema, ReadinessScoreSchema } from "@forgewright/core";
 import type { LanguageModelV1 } from "ai";
-import { SYSTEM_PROMPT, buildWorkUnitPrompt, buildReadinessPrompt } from "./prompts";
+import { z } from "zod";
+import { SYSTEM_PROMPT, buildReadinessPrompt, buildWorkUnitPrompt } from "./prompts";
 
 export interface AnalyzerOptions {
   model: LanguageModelV1;
@@ -33,7 +33,7 @@ export class Analyzer {
               .string()
               .optional()
               .transform((s) => (s ? new Date(s) : undefined)),
-          })
+          }),
         ),
       }),
     });
@@ -50,7 +50,7 @@ export class Analyzer {
     commits: Commit[],
     workUnits: WorkUnit[],
     currentVersion: string,
-    ciPassing: boolean = true
+    ciPassing = true,
   ): Promise<ReadinessScore> {
     if (commits.length === 0 && workUnits.length === 0) {
       return {
@@ -74,21 +74,19 @@ export class Analyzer {
     return object;
   }
 
-  async suggestVersionBump(
-    workUnits: WorkUnit[],
-    commits: Commit[]
-  ): Promise<VersionBump> {
+  async suggestVersionBump(workUnits: WorkUnit[], commits: Commit[]): Promise<VersionBump> {
     // Check for breaking changes
     const hasBreaking = commits.some(
       (c) =>
         c.message.includes("BREAKING") ||
         c.message.startsWith("!") ||
-        c.body.includes("BREAKING CHANGE")
+        c.body.includes("BREAKING CHANGE"),
     );
     if (hasBreaking) return "major";
 
     // Check for new features
-    const hasFeature = workUnits.some((u) => u.value === "high") ||
+    const hasFeature =
+      workUnits.some((u) => u.value === "high") ||
       commits.some((c) => c.message.startsWith("feat"));
     if (hasFeature) return "minor";
 

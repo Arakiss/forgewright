@@ -1,10 +1,10 @@
 #!/usr/bin/env bun
 
-import { parseArgs } from "util";
+import { parseArgs } from "node:util";
 import { init } from "./commands/init";
-import { status } from "./commands/status";
 import { preview } from "./commands/preview";
 import { release } from "./commands/release";
+import { status } from "./commands/status";
 import * as out from "./output";
 
 const VERSION = "0.1.0";

@@ -1,10 +1,6 @@
 import { z } from "zod";
 
-export const AIProviderSchema = z.enum([
-  "anthropic",
-  "openai",
-  "google",
-]);
+export const AIProviderSchema = z.enum(["anthropic", "openai", "google"]);
 
 export type AIProvider = z.infer<typeof AIProviderSchema>;
 

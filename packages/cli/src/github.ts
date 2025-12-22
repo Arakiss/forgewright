@@ -1,5 +1,5 @@
-import { $ } from "bun";
 import type { Git } from "@forgewright/core";
+import { $ } from "bun";
 
 export interface GitHubRepo {
   owner: string;
@@ -50,7 +50,7 @@ export class GitHub {
       body: string;
       draft?: boolean;
       prerelease?: boolean;
-    }
+    },
   ): Promise<GitHubRelease> {
     if (!this.token) {
       throw new Error("GITHUB_TOKEN is required to create releases");
@@ -73,7 +73,7 @@ export class GitHub {
           draft: options.draft ?? false,
           prerelease: options.prerelease ?? false,
         }),
-      }
+      },
     );
 
     if (!response.ok) {
@@ -93,7 +93,7 @@ export class GitHub {
           "X-GitHub-Api-Version": "2022-11-28",
           ...(this.token ? { Authorization: `Bearer ${this.token}` } : {}),
         },
-      }
+      },
     );
 
     if (response.status === 404) {
@@ -108,11 +108,7 @@ export class GitHub {
   }
 
   isCI(): boolean {
-    return (
-      !!process.env.CI ||
-      !!process.env.GITHUB_ACTIONS ||
-      !!process.env.GITHUB_RUN_ID
-    );
+    return !!process.env.CI || !!process.env.GITHUB_ACTIONS || !!process.env.GITHUB_RUN_ID;
   }
 
   async ghCliAvailable(): Promise<boolean> {
@@ -124,15 +120,13 @@ export class GitHub {
     }
   }
 
-  async createReleaseWithCLI(
-    options: {
-      tag: string;
-      title: string;
-      notes: string;
-      draft?: boolean;
-      prerelease?: boolean;
-    }
-  ): Promise<string> {
+  async createReleaseWithCLI(options: {
+    tag: string;
+    title: string;
+    notes: string;
+    draft?: boolean;
+    prerelease?: boolean;
+  }): Promise<string> {
     const args = [
       "release",
       "create",

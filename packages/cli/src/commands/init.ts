@@ -1,6 +1,6 @@
-import { parseArgs } from "util";
-import { getDefaultConfig, type AIProvider, AIProviderSchema } from "@forgewright/core";
-import { hasApiKey, getApiKeyEnvVar } from "@forgewright/ai";
+import { parseArgs } from "node:util";
+import { getApiKeyEnvVar, hasApiKey } from "@forgewright/ai";
+import { type AIProvider, AIProviderSchema, getDefaultConfig } from "@forgewright/core";
 import * as out from "../output";
 
 export async function init(args: string[]): Promise<void> {
@@ -18,7 +18,7 @@ export async function init(args: string[]): Promise<void> {
 
   // Check if config already exists
   const existingConfig = Bun.file(configPath);
-  if (await existingConfig.exists() && !values.force) {
+  if ((await existingConfig.exists()) && !values.force) {
     out.error("forgewright.config.ts already exists. Use --force to overwrite.");
     process.exit(1);
   }

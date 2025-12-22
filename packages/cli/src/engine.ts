@@ -1,5 +1,12 @@
-import { Git, loadConfig, bumpVersion, type ForgewrightConfig, type WorkUnit, type ReadinessScore } from "@forgewright/core";
-import { getModel, Analyzer, ChangelogGenerator } from "@forgewright/ai";
+import { Analyzer, ChangelogGenerator, getModel } from "@forgewright/ai";
+import {
+  type ForgewrightConfig,
+  Git,
+  type ReadinessScore,
+  type WorkUnit,
+  bumpVersion,
+  loadConfig,
+} from "@forgewright/core";
 import { GitHub } from "./github";
 
 export interface EngineContext {
@@ -28,9 +35,7 @@ export async function createEngine(cwd: string = process.cwd()): Promise<EngineC
   const config = await loadConfig(cwd);
 
   if (!config) {
-    throw new Error(
-      "No forgewright.config.ts found. Run 'forgewright init' first."
-    );
+    throw new Error("No forgewright.config.ts found. Run 'forgewright init' first.");
   }
 
   const model = getModel({
@@ -82,11 +87,12 @@ export async function analyze(ctx: EngineContext): Promise<AnalysisResult> {
     commits,
     workUnits,
     currentVersion,
-    ciPassing
+    ciPassing,
   );
 
   // Suggest version
-  const suggestedBump = readiness.suggestedBump ?? await ctx.analyzer.suggestVersionBump(workUnits, commits);
+  const suggestedBump =
+    readiness.suggestedBump ?? (await ctx.analyzer.suggestVersionBump(workUnits, commits));
   const suggestedVersion = readiness.ready ? bumpVersion(currentVersion, suggestedBump) : null;
 
   return {
@@ -100,7 +106,7 @@ export async function analyze(ctx: EngineContext): Promise<AnalysisResult> {
 export async function generateChangelog(
   ctx: EngineContext,
   analysis: AnalysisResult,
-  version: string
+  version: string,
 ): Promise<string> {
   const latestTag = await ctx.git.getLatestTag();
   const commits = await ctx.git.getCommits(latestTag?.hash);
@@ -112,7 +118,7 @@ export async function executeRelease(
   ctx: EngineContext,
   version: string,
   changelog: string,
-  options: { dryRun?: boolean; skipGitHub?: boolean } = {}
+  options: { dryRun?: boolean; skipGitHub?: boolean } = {},
 ): Promise<ReleaseResult> {
   if (options.dryRun) {
     return {
