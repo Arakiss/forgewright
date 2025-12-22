@@ -29,14 +29,14 @@ export class GitHub {
 
     // Handle SSH: git@github.com:owner/repo.git
     const sshMatch = url.match(/git@github\.com:([^/]+)\/([^.]+)(?:\.git)?/);
-    if (sshMatch) {
-      return { owner: sshMatch[1]!, name: sshMatch[2]! };
+    if (sshMatch?.[1] && sshMatch[2]) {
+      return { owner: sshMatch[1], name: sshMatch[2] };
     }
 
     // Handle HTTPS: https://github.com/owner/repo.git
     const httpsMatch = url.match(/github\.com\/([^/]+)\/([^/.]+)(?:\.git)?/);
-    if (httpsMatch) {
-      return { owner: httpsMatch[1]!, name: httpsMatch[2]! };
+    if (httpsMatch?.[1] && httpsMatch[2]) {
+      return { owner: httpsMatch[1], name: httpsMatch[2] };
     }
 
     return null;
@@ -109,6 +109,55 @@ export class GitHub {
 
   isCI(): boolean {
     return !!process.env.CI || !!process.env.GITHUB_ACTIONS || !!process.env.GITHUB_RUN_ID;
+  }
+
+  async getWorkflowStatus(
+    repo: GitHubRepo,
+    branch: string,
+  ): Promise<"success" | "failure" | "pending" | "unknown"> {
+    try {
+      const response = await fetch(
+        `https://api.github.com/repos/${repo.owner}/${repo.name}/actions/runs?branch=${encodeURIComponent(branch)}&per_page=1`,
+        {
+          headers: {
+            Accept: "application/vnd.github+json",
+            "X-GitHub-Api-Version": "2022-11-28",
+            ...(this.token ? { Authorization: `Bearer ${this.token}` } : {}),
+          },
+        },
+      );
+
+      if (!response.ok) {
+        // Can't access Actions API (maybe no token or private repo)
+        return "unknown";
+      }
+
+      const data = (await response.json()) as {
+        workflow_runs?: Array<{
+          status: string;
+          conclusion: string | null;
+        }>;
+      };
+
+      const latestRun = data.workflow_runs?.[0];
+      if (!latestRun) {
+        // No workflow runs found - assume OK (might not use Actions)
+        return "unknown";
+      }
+
+      if (latestRun.status === "in_progress" || latestRun.status === "queued") {
+        return "pending";
+      }
+
+      if (latestRun.conclusion === "success") {
+        return "success";
+      }
+
+      return "failure";
+    } catch {
+      // Network error or other issue - don't block release
+      return "unknown";
+    }
   }
 
   async ghCliAvailable(): Promise<boolean> {

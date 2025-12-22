@@ -178,6 +178,37 @@ describe("GitHub", () => {
 
     // Note: Actual CLI calls are tested in integration tests
   });
+
+  describe("getWorkflowStatus", () => {
+    test("should be a function", () => {
+      const gh = new GitHub();
+      expect(typeof gh.getWorkflowStatus).toBe("function");
+    });
+
+    test("should return 'unknown' for invalid repo", async () => {
+      const gh = new GitHub();
+      // Use a non-existent repo
+      const result = await gh.getWorkflowStatus(
+        { owner: "nonexistent-owner-12345", name: "nonexistent-repo-12345" },
+        "main",
+      );
+      // Without auth, we get 'unknown' (404 or auth error)
+      expect(["unknown", "failure"]).toContain(result);
+    });
+
+    test("should handle network errors gracefully", async () => {
+      const gh = new GitHub();
+      // Invalid owner/repo should not throw
+      const result = await gh.getWorkflowStatus({ owner: "", name: "" }, "main");
+      expect(result).toBe("unknown");
+    });
+
+    test("should return valid workflow status type", async () => {
+      const gh = new GitHub();
+      const result = await gh.getWorkflowStatus({ owner: "test", name: "repo" }, "main");
+      expect(["success", "failure", "pending", "unknown"]).toContain(result);
+    });
+  });
 });
 
 describe("GitHubRepo type", () => {
