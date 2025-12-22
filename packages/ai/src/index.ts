@@ -17,3 +17,12 @@ export {
   getModel,
   hasApiKey,
 } from "./provider";
+// Utilities
+export {
+  AIError,
+  calculateBackoff,
+  isRetryableError,
+  type RetryOptions,
+  sleep,
+  withRetry,
+} from "./utils";

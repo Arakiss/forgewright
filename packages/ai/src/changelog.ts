@@ -2,6 +2,7 @@ import type { Commit, WorkUnit } from "@forgewright/core";
 import type { LanguageModelV1 } from "ai";
 import { generateText } from "ai";
 import { buildChangelogPrompt, SYSTEM_PROMPT } from "./prompts";
+import { withRetry } from "./utils";
 
 export interface ChangelogOptions {
   model: LanguageModelV1;
@@ -22,11 +23,13 @@ export class ChangelogGenerator {
       return this.generateMinimalChangelog(commits, version);
     }
 
-    const { text } = await generateText({
-      model: this.model,
-      system: SYSTEM_PROMPT,
-      prompt: buildChangelogPrompt(workUnits, commits, version),
-    });
+    const { text } = await withRetry(() =>
+      generateText({
+        model: this.model,
+        system: SYSTEM_PROMPT,
+        prompt: buildChangelogPrompt(workUnits, commits, version),
+      }),
+    );
 
     return text;
   }

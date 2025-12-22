@@ -4,6 +4,7 @@ import type { LanguageModelV1 } from "ai";
 import { generateObject } from "ai";
 import { z } from "zod";
 import { buildReadinessPrompt, buildWorkUnitPrompt, SYSTEM_PROMPT } from "./prompts";
+import { withRetry } from "./utils";
 
 export interface AnalyzerOptions {
   model: LanguageModelV1;
@@ -21,22 +22,24 @@ export class Analyzer {
       return [];
     }
 
-    const { object } = await generateObject({
-      model: this.model,
-      system: SYSTEM_PROMPT,
-      prompt: buildWorkUnitPrompt(commits),
-      schema: z.object({
-        workUnits: z.array(
-          WorkUnitSchema.extend({
-            createdAt: z.string().transform((s) => new Date(s)),
-            completedAt: z
-              .string()
-              .optional()
-              .transform((s) => (s ? new Date(s) : undefined)),
-          }),
-        ),
+    const { object } = await withRetry(() =>
+      generateObject({
+        model: this.model,
+        system: SYSTEM_PROMPT,
+        prompt: buildWorkUnitPrompt(commits),
+        schema: z.object({
+          workUnits: z.array(
+            WorkUnitSchema.extend({
+              createdAt: z.string().transform((s) => new Date(s)),
+              completedAt: z
+                .string()
+                .optional()
+                .transform((s) => (s ? new Date(s) : undefined)),
+            }),
+          ),
+        }),
       }),
-    });
+    );
 
     return object.workUnits.map((wu, idx) => ({
       ...wu,
@@ -64,12 +67,14 @@ export class Analyzer {
       };
     }
 
-    const { object } = await generateObject({
-      model: this.model,
-      system: SYSTEM_PROMPT,
-      prompt: buildReadinessPrompt(commits, workUnits, currentVersion, ciPassing),
-      schema: ReadinessScoreSchema,
-    });
+    const { object } = await withRetry(() =>
+      generateObject({
+        model: this.model,
+        system: SYSTEM_PROMPT,
+        prompt: buildReadinessPrompt(commits, workUnits, currentVersion, ciPassing),
+        schema: ReadinessScoreSchema,
+      }),
+    );
 
     return object;
   }
