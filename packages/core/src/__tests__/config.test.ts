@@ -2,11 +2,13 @@ import { describe, expect, test } from "bun:test";
 import {
   type AIProvider,
   AIProviderSchema,
+  type ConfigLoadResult,
   defineConfig,
   type ForgewrightConfig,
   ForgewrightConfigSchema,
   getDefaultConfig,
   loadConfig,
+  loadConfigWithDetails,
   ReleaseModeSchema,
 } from "../config";
 
@@ -248,6 +250,58 @@ describe("loadConfig", () => {
     // May or may not exist depending on test environment
     if (result) {
       expect(result.ai.provider).toBeDefined();
+    }
+  });
+});
+
+describe("loadConfigWithDetails", () => {
+  test("should be a function", () => {
+    expect(typeof loadConfigWithDetails).toBe("function");
+  });
+
+  test("should return not_found error for non-existent config", async () => {
+    const result = await loadConfigWithDetails("/tmp/non-existent-directory-12345");
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error).toBe("not_found");
+    }
+  });
+
+  test("should return success with config when file exists", async () => {
+    // This tests the actual project's config
+    const result = await loadConfigWithDetails(process.cwd());
+    // May or may not exist depending on test environment
+    if (result.success) {
+      expect(result.config).toBeDefined();
+      expect(result.config.ai.provider).toBeDefined();
+    }
+  });
+
+  test("should have discriminated union type", () => {
+    // Type test - success case guarantees config exists
+    const successResult: ConfigLoadResult = {
+      success: true,
+      config: getDefaultConfig("anthropic"),
+    };
+    expect(successResult.success).toBe(true);
+    if (successResult.success) {
+      expect(successResult.config.ai.provider).toBe("anthropic");
+    }
+
+    // Type test - failure case guarantees error exists
+    const failResult: ConfigLoadResult = { success: false, error: "not_found" };
+    expect(failResult.success).toBe(false);
+    if (!failResult.success) {
+      expect(failResult.error).toBe("not_found");
+    }
+  });
+
+  test("should include details in error cases", async () => {
+    const result = await loadConfigWithDetails("/tmp/non-existent-12345");
+    if (!result.success) {
+      expect(result.error).toBeDefined();
+      // details is optional but error is always defined on failure
+      expect(["not_found", "parse_error", "validation_error"]).toContain(result.error);
     }
   });
 });

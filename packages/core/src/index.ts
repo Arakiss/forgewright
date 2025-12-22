@@ -17,11 +17,14 @@ export {
 export {
   type AIProvider,
   AIProviderSchema,
+  type ConfigLoadError,
+  type ConfigLoadResult,
   defineConfig,
   type ForgewrightConfig,
   ForgewrightConfigSchema,
   getDefaultConfig,
   loadConfig,
+  loadConfigWithDetails,
   type ReleaseMode,
   ReleaseModeSchema,
 } from "./config";

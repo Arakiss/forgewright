@@ -51,15 +51,69 @@ export function defineConfig(config: ForgewrightConfig): ForgewrightConfig {
   return ForgewrightConfigSchema.parse(config);
 }
 
-export async function loadConfig(cwd: string = process.cwd()): Promise<ForgewrightConfig | null> {
+export type ConfigLoadError = "not_found" | "parse_error" | "validation_error";
+
+export type ConfigLoadResult =
+  | { success: true; config: ForgewrightConfig }
+  | { success: false; error: ConfigLoadError; details?: string };
+
+/**
+ * Load configuration with detailed error reporting
+ */
+export async function loadConfigWithDetails(
+  cwd: string = process.cwd(),
+): Promise<ConfigLoadResult> {
   const configPath = `${cwd}/forgewright.config.ts`;
+
+  // Check if file exists using Bun's file API
+  const file = Bun.file(configPath);
+  const exists = await file.exists();
+
+  if (!exists) {
+    return { success: false, error: "not_found" };
+  }
 
   try {
     const module = await import(configPath);
-    return ForgewrightConfigSchema.parse(module.default);
-  } catch {
-    return null;
+
+    if (!module.default) {
+      return {
+        success: false,
+        error: "parse_error",
+        details: "Config file must export a default configuration object",
+      };
+    }
+
+    const result = ForgewrightConfigSchema.safeParse(module.default);
+
+    if (!result.success) {
+      const issues = result.error.issues
+        .map((i) => `  - ${i.path.join(".")}: ${i.message}`)
+        .join("\n");
+      return {
+        success: false,
+        error: "validation_error",
+        details: `Configuration validation failed:\n${issues}`,
+      };
+    }
+
+    return { success: true, config: result.data };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return {
+      success: false,
+      error: "parse_error",
+      details: `Failed to load config: ${message}`,
+    };
   }
+}
+
+/**
+ * Load configuration (legacy API for backwards compatibility)
+ */
+export async function loadConfig(cwd: string = process.cwd()): Promise<ForgewrightConfig | null> {
+  const result = await loadConfigWithDetails(cwd);
+  return result.success ? result.config : null;
 }
 
 export function getDefaultConfig(provider: AIProvider): ForgewrightConfig {
