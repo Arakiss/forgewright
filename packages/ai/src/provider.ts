@@ -1,46 +1,100 @@
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { createMistral } from "@ai-sdk/mistral";
 import { createOpenAI } from "@ai-sdk/openai";
+import { createXai } from "@ai-sdk/xai";
 import type { AIProvider } from "@forgewright/core";
-import type { LanguageModelV1 } from "ai";
+import type { LanguageModel } from "ai";
 
 export interface AIProviderConfig {
   provider: AIProvider;
   model?: string;
   apiKey?: string;
+  baseURL?: string;
 }
 
 const DEFAULT_MODELS: Record<AIProvider, string> = {
   anthropic: "claude-sonnet-4-20250514",
   openai: "gpt-4o",
   google: "gemini-2.0-flash-exp",
+  xai: "grok-2-1212",
+  mistral: "mistral-large-latest",
+  ollama: "llama3.2",
+  "openai-compatible": "gpt-4o", // User must specify model for compatible providers
 };
 
 const API_KEY_ENV_VARS: Record<AIProvider, string> = {
   anthropic: "ANTHROPIC_API_KEY",
   openai: "OPENAI_API_KEY",
   google: "GOOGLE_API_KEY",
+  xai: "XAI_API_KEY",
+  mistral: "MISTRAL_API_KEY",
+  ollama: "", // Ollama doesn't require API key
+  "openai-compatible": "OPENAI_API_KEY", // Fallback, user should provide
 };
 
-const PROVIDER_FACTORIES: Record<
-  AIProvider,
-  (apiKey?: string) => (modelId: string) => LanguageModelV1
-> = {
-  anthropic: (apiKey) => {
-    const client = createAnthropic({ apiKey: apiKey ?? process.env.ANTHROPIC_API_KEY });
+type ProviderFactory = (config: AIProviderConfig) => (modelId: string) => LanguageModel;
+
+const PROVIDER_FACTORIES: Record<AIProvider, ProviderFactory> = {
+  anthropic: (config) => {
+    const client = createAnthropic({
+      apiKey: config.apiKey ?? process.env.ANTHROPIC_API_KEY,
+    });
     return (modelId) => client(modelId);
   },
-  openai: (apiKey) => {
-    const client = createOpenAI({ apiKey: apiKey ?? process.env.OPENAI_API_KEY });
+
+  openai: (config) => {
+    const client = createOpenAI({
+      apiKey: config.apiKey ?? process.env.OPENAI_API_KEY,
+      baseURL: config.baseURL,
+    });
     return (modelId) => client(modelId);
   },
-  google: (apiKey) => {
-    const client = createGoogleGenerativeAI({ apiKey: apiKey ?? process.env.GOOGLE_API_KEY });
+
+  google: (config) => {
+    const client = createGoogleGenerativeAI({
+      apiKey: config.apiKey ?? process.env.GOOGLE_API_KEY,
+    });
+    return (modelId) => client(modelId);
+  },
+
+  xai: (config) => {
+    const client = createXai({
+      apiKey: config.apiKey ?? process.env.XAI_API_KEY,
+    });
+    return (modelId) => client(modelId);
+  },
+
+  mistral: (config) => {
+    const client = createMistral({
+      apiKey: config.apiKey ?? process.env.MISTRAL_API_KEY,
+    });
+    return (modelId) => client(modelId);
+  },
+
+  // Ollama exposes an OpenAI-compatible API at /v1
+  ollama: (config) => {
+    const client = createOpenAI({
+      baseURL: config.baseURL ?? process.env.OLLAMA_BASE_URL ?? "http://127.0.0.1:11434/v1",
+      apiKey: "ollama", // Ollama doesn't require a real API key
+    });
+    return (modelId) => client(modelId);
+  },
+
+  // For Groq, Together.ai, LM Studio, or any OpenAI-compatible API
+  "openai-compatible": (config) => {
+    if (!config.baseURL) {
+      throw new Error("baseURL is required for openai-compatible provider");
+    }
+    const client = createOpenAI({
+      apiKey: config.apiKey ?? process.env.OPENAI_API_KEY,
+      baseURL: config.baseURL,
+    });
     return (modelId) => client(modelId);
   },
 };
 
-export function getModel(config: AIProviderConfig): LanguageModelV1 {
+export function getModel(config: AIProviderConfig): LanguageModel {
   const modelId = config.model ?? DEFAULT_MODELS[config.provider];
   const factory = PROVIDER_FACTORIES[config.provider];
 
@@ -48,7 +102,7 @@ export function getModel(config: AIProviderConfig): LanguageModelV1 {
     throw new Error(`Unsupported AI provider: ${config.provider}`);
   }
 
-  return factory(config.apiKey)(modelId);
+  return factory(config)(modelId);
 }
 
 export function getApiKeyEnvVar(provider: AIProvider): string {
@@ -56,6 +110,22 @@ export function getApiKeyEnvVar(provider: AIProvider): string {
 }
 
 export function hasApiKey(provider: AIProvider): boolean {
+  // Ollama doesn't require API key
+  if (provider === "ollama") {
+    return true;
+  }
+
   const envVar = getApiKeyEnvVar(provider);
+  if (!envVar) {
+    return true; // No env var required
+  }
+
   return !!process.env[envVar];
+}
+
+/**
+ * Get a list of all supported providers
+ */
+export function getSupportedProviders(): AIProvider[] {
+  return Object.keys(PROVIDER_FACTORIES) as AIProvider[];
 }

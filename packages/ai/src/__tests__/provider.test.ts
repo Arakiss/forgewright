@@ -13,6 +13,18 @@ describe("getApiKeyEnvVar", () => {
   test("should return correct env var for google", () => {
     expect(getApiKeyEnvVar("google")).toBe("GOOGLE_API_KEY");
   });
+
+  test("should return correct env var for xai", () => {
+    expect(getApiKeyEnvVar("xai")).toBe("XAI_API_KEY");
+  });
+
+  test("should return correct env var for mistral", () => {
+    expect(getApiKeyEnvVar("mistral")).toBe("MISTRAL_API_KEY");
+  });
+
+  test("should return empty string for ollama", () => {
+    expect(getApiKeyEnvVar("ollama")).toBe("");
+  });
 });
 
 describe("hasApiKey", () => {
@@ -60,6 +72,19 @@ describe("hasApiKey", () => {
     // Edge case: whitespace is truthy in JS
     process.env.ANTHROPIC_API_KEY = "   ";
     expect(hasApiKey("anthropic")).toBe(true);
+  });
+
+  test("should return true for ollama (no API key required)", () => {
+    expect(hasApiKey("ollama")).toBe(true);
+  });
+
+  test("should return false when XAI_API_KEY is not set", () => {
+    expect(hasApiKey("xai")).toBe(false);
+  });
+
+  test("should return true when XAI_API_KEY is set", () => {
+    process.env.XAI_API_KEY = "test-key";
+    expect(hasApiKey("xai")).toBe(true);
   });
 });
 
@@ -119,5 +144,49 @@ describe("getModel", () => {
     expect(() => {
       getModel({ provider: "invalid-provider" });
     }).toThrow("Unsupported AI provider");
+  });
+
+  test("should return a model object for xai", () => {
+    const model = getModel({ provider: "xai", apiKey: "test-key" });
+    expect(model).toBeDefined();
+    expect(typeof model).toBe("object");
+  });
+
+  test("should return a model object for mistral", () => {
+    const model = getModel({ provider: "mistral", apiKey: "test-key" });
+    expect(model).toBeDefined();
+    expect(typeof model).toBe("object");
+  });
+
+  test("should return a model object for ollama", () => {
+    const model = getModel({ provider: "ollama" });
+    expect(model).toBeDefined();
+    expect(typeof model).toBe("object");
+  });
+
+  test("should return a model object for openai-compatible with baseURL", () => {
+    const model = getModel({
+      provider: "openai-compatible",
+      baseURL: "https://api.groq.com/openai/v1",
+      apiKey: "test-key",
+    });
+    expect(model).toBeDefined();
+    expect(typeof model).toBe("object");
+  });
+
+  test("should throw for openai-compatible without baseURL", () => {
+    expect(() => {
+      getModel({ provider: "openai-compatible", apiKey: "test-key" });
+    }).toThrow("baseURL is required");
+  });
+
+  test("should accept baseURL for config", () => {
+    const config: AIProviderConfig = {
+      provider: "openai-compatible",
+      model: "llama-3.3-70b-versatile",
+      apiKey: "test-key",
+      baseURL: "https://api.groq.com/openai/v1",
+    };
+    expect(config.baseURL).toBe("https://api.groq.com/openai/v1");
   });
 });

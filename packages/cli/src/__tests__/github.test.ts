@@ -185,29 +185,42 @@ describe("GitHub", () => {
       expect(typeof gh.getWorkflowStatus).toBe("function");
     });
 
-    test("should return 'unknown' for invalid repo", async () => {
-      const gh = new GitHub();
-      // Use a non-existent repo
-      const result = await gh.getWorkflowStatus(
-        { owner: "nonexistent-owner-12345", name: "nonexistent-repo-12345" },
-        "main",
-      );
-      // Without auth, we get 'unknown' (404 or auth error)
-      expect(["unknown", "failure"]).toContain(result);
-    });
+    // Note: These tests make real network requests, so they may timeout in slow networks
+    test(
+      "should return 'unknown' for invalid repo",
+      async () => {
+        const gh = new GitHub();
+        // Use a non-existent repo
+        const result = await gh.getWorkflowStatus(
+          { owner: "nonexistent-owner-12345", name: "nonexistent-repo-12345" },
+          "main",
+        );
+        // Without auth, we get 'unknown' (404 or auth error)
+        expect(["unknown", "failure"]).toContain(result);
+      },
+      { timeout: 15000 },
+    );
 
-    test("should handle network errors gracefully", async () => {
-      const gh = new GitHub();
-      // Invalid owner/repo should not throw
-      const result = await gh.getWorkflowStatus({ owner: "", name: "" }, "main");
-      expect(result).toBe("unknown");
-    });
+    test(
+      "should handle network errors gracefully",
+      async () => {
+        const gh = new GitHub();
+        // Invalid owner/repo should not throw
+        const result = await gh.getWorkflowStatus({ owner: "", name: "" }, "main");
+        expect(result).toBe("unknown");
+      },
+      { timeout: 15000 },
+    );
 
-    test("should return valid workflow status type", async () => {
-      const gh = new GitHub();
-      const result = await gh.getWorkflowStatus({ owner: "test", name: "repo" }, "main");
-      expect(["success", "failure", "pending", "unknown"]).toContain(result);
-    });
+    test(
+      "should return valid workflow status type",
+      async () => {
+        const gh = new GitHub();
+        const result = await gh.getWorkflowStatus({ owner: "test", name: "repo" }, "main");
+        expect(["success", "failure", "pending", "unknown"]).toContain(result);
+      },
+      { timeout: 15000 },
+    );
   });
 });
 

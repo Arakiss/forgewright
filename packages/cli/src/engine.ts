@@ -66,6 +66,7 @@ export async function createEngine(cwd: string = process.cwd()): Promise<EngineC
   const model = getModel({
     provider: config.ai.provider,
     model: config.ai.model,
+    baseURL: config.ai.baseURL,
   });
 
   return {

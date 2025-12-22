@@ -1,15 +1,15 @@
 import type { Commit, WorkUnit } from "@forgewright/core";
-import type { LanguageModelV1 } from "ai";
+import type { LanguageModel } from "ai";
 import { generateText } from "ai";
 import { buildChangelogPrompt, SYSTEM_PROMPT } from "./prompts";
 import { withRetry } from "./utils";
 
 export interface ChangelogOptions {
-  model: LanguageModelV1;
+  model: LanguageModel;
 }
 
 export class ChangelogGenerator {
-  private model: LanguageModelV1;
+  private model: LanguageModel;
 
   constructor(options: ChangelogOptions) {
     this.model = options.model;

@@ -1,17 +1,17 @@
 import type { Commit, ReadinessScore, VersionBump, WorkUnit } from "@forgewright/core";
 import { ReadinessScoreSchema, WorkUnitSchema } from "@forgewright/core";
-import type { LanguageModelV1 } from "ai";
+import type { LanguageModel } from "ai";
 import { generateObject } from "ai";
 import { z } from "zod";
 import { buildReadinessPrompt, buildWorkUnitPrompt, SYSTEM_PROMPT } from "./prompts";
 import { withRetry } from "./utils";
 
 export interface AnalyzerOptions {
-  model: LanguageModelV1;
+  model: LanguageModel;
 }
 
 export class Analyzer {
-  private model: LanguageModelV1;
+  private model: LanguageModel;
 
   constructor(options: AnalyzerOptions) {
     this.model = options.model;

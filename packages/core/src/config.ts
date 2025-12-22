@@ -1,6 +1,17 @@
 import { z } from "zod";
 
-export const AIProviderSchema = z.enum(["anthropic", "openai", "google"]);
+export const AIProviderSchema = z.enum([
+  // Official AI SDK providers
+  "anthropic",
+  "openai",
+  "google",
+  "xai",
+  "mistral",
+  // Local/self-hosted
+  "ollama",
+  // OpenAI-compatible (uses openai provider with custom baseURL)
+  "openai-compatible",
+]);
 
 export type AIProvider = z.infer<typeof AIProviderSchema>;
 
@@ -12,6 +23,8 @@ export const ForgewrightConfigSchema = z.object({
   ai: z.object({
     provider: AIProviderSchema,
     model: z.string().optional(),
+    // For OpenAI-compatible providers (Groq, Together.ai, LM Studio, etc.)
+    baseURL: z.string().url().optional(),
   }),
 
   mode: ReleaseModeSchema.default("confirm"),
