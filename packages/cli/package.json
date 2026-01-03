@@ -1,16 +1,50 @@
 {
   "name": "@forgewright/cli",
   "version": "0.1.0",
-  "private": true,
+  "description": "CLI for Forgewright - AI-first release system for LLM-assisted development",
   "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "bin": {
-    "forgewright": "./src/index.ts"
+    "forgewright": "./dist/index.js"
   },
   "exports": {
-    ".": "./src/index.ts"
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
   },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
-    "build": "bun build ./src/index.ts --outdir ./dist --target bun"
+    "build": "bun build ./src/index.ts --outdir ./dist --target bun",
+    "prepublishOnly": "bun run build"
+  },
+  "keywords": [
+    "cli",
+    "release",
+    "changelog",
+    "ai",
+    "llm",
+    "semantic-release",
+    "automation",
+    "forgewright"
+  ],
+  "author": "Arakiss",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Arakiss/forgewright.git",
+    "directory": "packages/cli"
+  },
+  "bugs": {
+    "url": "https://github.com/Arakiss/forgewright/issues"
+  },
+  "homepage": "https://github.com/Arakiss/forgewright#readme",
+  "engines": {
+    "node": ">=18"
   },
   "dependencies": {
     "@forgewright/core": "workspace:*",
@@ -20,5 +54,8 @@
   "devDependencies": {
     "typescript": "catalog:",
     "@types/bun": "latest"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

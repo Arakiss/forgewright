@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      id-token: write
 
     steps:
       - uses: actions/checkout@v4
@@ -25,8 +26,17 @@ jobs:
         with:
           bun-version: latest
 
+      - name: Setup Node.js (for npm publish)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+
       - name: Install dependencies
         run: bun install
+
+      - name: Run tests
+        run: bun test
 
       - name: Check Release Readiness
         id: check
@@ -38,25 +48,75 @@ jobs:
 
           if echo "$result" | jq -e '.readiness.ready' > /dev/null 2>&1; then
             ready=$(echo "$result" | jq -r '.readiness.ready')
+            score=$(echo "$result" | jq -r '.readiness.score')
             echo "ready=$ready" >> $GITHUB_OUTPUT
+            echo "score=$score" >> $GITHUB_OUTPUT
           else
             echo "ready=false" >> $GITHUB_OUTPUT
+            echo "score=0" >> $GITHUB_OUTPUT
           fi
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
 
-      - name: Create Release
+      - name: Display Readiness Status
+        run: |
+          echo "Ready: ${{ steps.check.outputs.ready }}"
+          echo "Score: ${{ steps.check.outputs.score }}"
+
+      - name: Build packages
         if: steps.check.outputs.ready == 'true' || inputs.force
-        run: bun run forgewright release --ci
+        run: bun run build
+
+      - name: Create Release with Forgewright
+        if: steps.check.outputs.ready == 'true' || inputs.force
+        id: release
+        run: |
+          output=$(bun run forgewright release --ci 2>&1)
+          echo "$output"
+          # Extract version from output
+          version=$(echo "$output" | grep -oP 'v\d+\.\d+\.\d+' | head -1 || echo "")
+          echo "version=$version" >> $GITHUB_OUTPUT
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish @forgewright/core to npm
+        if: steps.check.outputs.ready == 'true' || inputs.force
+        run: |
+          cd packages/core
+          npm publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish @forgewright/ai to npm
+        if: steps.check.outputs.ready == 'true' || inputs.force
+        run: |
+          cd packages/ai
+          npm publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish @forgewright/cli to npm
+        if: steps.check.outputs.ready == 'true' || inputs.force
+        run: |
+          cd packages/cli
+          npm publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish forgewright to npm
+        if: steps.check.outputs.ready == 'true' || inputs.force
+        run: |
+          cd packages/forgewright
+          npm publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Commit Changelog
         if: steps.check.outputs.ready == 'true' || inputs.force
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add CHANGELOG.md
-          git diff --staged --quiet || git commit -m "docs: update changelog"
+          git add CHANGELOG.md package.json packages/*/package.json
+          git diff --staged --quiet || git commit -m "chore: release ${{ steps.release.outputs.version }}"
           git push

@@ -1,10 +1,13 @@
 {
-  "name": "@forgewright/core",
+  "name": "forgewright",
   "version": "0.1.0",
-  "description": "Core primitives for Forgewright - AI-first release system",
+  "description": "AI-first release system for LLM-assisted development",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "bin": {
+    "forgewright": "./dist/cli.js"
+  },
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -16,7 +19,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "bun build ./src/index.ts --outdir ./dist --target bun",
+    "build": "bun build ./src/index.ts ./src/cli.ts --outdir ./dist --target bun",
     "prepublishOnly": "bun run build"
   },
   "keywords": [
@@ -25,15 +28,17 @@
     "versioning",
     "ai",
     "llm",
+    "claude",
+    "cursor",
     "semantic-release",
-    "automation"
+    "automation",
+    "developer-tools"
   ],
   "author": "Arakiss",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Arakiss/forgewright.git",
-    "directory": "packages/core"
+    "url": "git+https://github.com/Arakiss/forgewright.git"
   },
   "bugs": {
     "url": "https://github.com/Arakiss/forgewright/issues"
@@ -43,11 +48,9 @@
     "node": ">=18"
   },
   "dependencies": {
-    "zod": "catalog:"
-  },
-  "devDependencies": {
-    "typescript": "catalog:",
-    "@types/bun": "latest"
+    "@forgewright/core": "workspace:*",
+    "@forgewright/ai": "workspace:*",
+    "@forgewright/cli": "workspace:*"
   },
   "publishConfig": {
     "access": "public"

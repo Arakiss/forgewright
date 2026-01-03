@@ -1,14 +1,48 @@
 {
   "name": "@forgewright/ai",
   "version": "0.1.0",
-  "private": true,
+  "description": "AI analysis engine for Forgewright - work units, changelogs, readiness scoring",
   "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./src/index.ts",
-    "./*": "./src/*"
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
   },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
-    "build": "bun build ./src/index.ts --outdir ./dist --target bun"
+    "build": "bun build ./src/index.ts --outdir ./dist --target bun",
+    "prepublishOnly": "bun run build"
+  },
+  "keywords": [
+    "release",
+    "changelog",
+    "ai",
+    "llm",
+    "claude",
+    "openai",
+    "gemini",
+    "work-units",
+    "automation"
+  ],
+  "author": "Arakiss",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Arakiss/forgewright.git",
+    "directory": "packages/ai"
+  },
+  "bugs": {
+    "url": "https://github.com/Arakiss/forgewright/issues"
+  },
+  "homepage": "https://github.com/Arakiss/forgewright#readme",
+  "engines": {
+    "node": ">=18"
   },
   "dependencies": {
     "@forgewright/core": "workspace:*",
@@ -25,5 +59,8 @@
   "devDependencies": {
     "typescript": "catalog:",
     "@types/bun": "latest"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

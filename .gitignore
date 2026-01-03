@@ -27,3 +27,7 @@ bun.lockb
 # Logs
 *.log
 npm-debug.log*
+
+# Local data
+data/
+.claude/ralph-loop.local.md
