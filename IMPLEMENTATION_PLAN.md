@@ -1,5 +1,21 @@
 # Forgewright Implementation Plan
 
+## Current Status (January 2026)
+
+| Phase | Status | Notes |
+|-------|--------|-------|
+| Phase 1: Ship v0.1.0 | 🟡 Code Complete | Awaiting secrets for CI |
+| Phase 2: AI-Editor | ✅ Done | `forgewright rules` command working |
+| Phase 3: Distribution | ⏳ Pending | Manual tasks (blog, PH, etc.) |
+| Phase 4: Enhancements | ⏳ Future | Post-launch |
+
+### Next Steps
+1. Configure GitHub Secrets: `ANTHROPIC_API_KEY`, `NPM_TOKEN`
+2. CI will auto-release on next push to main
+3. Verify npm installation works
+
+---
+
 ## Phase 1: Ship v0.1.0 (Launch)
 
 ### 1.1 Dogfood Release
