@@ -4,9 +4,14 @@
 
 ### 1.1 Dogfood Release
 - [x] Run `bun run forgewright status` and verify it works (CLI works, 287 tests pass, needs API key for AI)
-- [ ] Run `bun run forgewright release --dry-run` to preview (requires API key)
-- [ ] Create first real release using Forgewright itself (requires API key)
-- [ ] Verify changelog is generated correctly (requires API key)
+- [ ] Run `bun run forgewright release --dry-run` to preview (BLOCKED: needs ANTHROPIC_API_KEY secret)
+- [ ] Create first real release using Forgewright itself (BLOCKED: needs secrets in GitHub)
+- [ ] Verify changelog is generated correctly (BLOCKED: needs secrets in GitHub)
+
+> **SECRETS NEEDED:**
+> - `ANTHROPIC_API_KEY` - For AI analysis
+> - `NPM_TOKEN` - For npm publishing
+> - `GITHUB_TOKEN` - Already available via GitHub Actions
 
 ### 1.2 Publish to npm (Automated via CI)
 - [x] Update package.json files for publishing
