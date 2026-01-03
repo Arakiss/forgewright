@@ -4,15 +4,23 @@
 
 | Phase | Status | Notes |
 |-------|--------|-------|
-| Phase 1: Ship v0.1.0 | 🟡 Code Complete | Awaiting secrets for CI |
+| Phase 1: Ship v0.1.0 | 🟡 Code Complete | CI passing, awaiting secrets |
 | Phase 2: AI-Editor | ✅ Done | `forgewright rules` command working |
 | Phase 3: Distribution | ⏳ Pending | Manual tasks (blog, PH, etc.) |
 | Phase 4: Enhancements | ⏳ Future | Post-launch |
 
-### Next Steps
-1. Configure GitHub Secrets: `ANTHROPIC_API_KEY`, `NPM_TOKEN`
-2. CI will auto-release on next push to main
-3. Verify npm installation works
+### CI Status
+✅ All 295 tests passing
+✅ Build successful
+✅ Workflows configured
+⏳ Waiting for secrets to enable release
+
+### Next Steps (Manual Actions Required)
+1. **Configure GitHub Secrets** (Settings → Secrets → Actions):
+   - `ANTHROPIC_API_KEY` - For AI-powered release analysis
+   - `NPM_TOKEN` - For npm publishing (get from npmjs.com)
+2. Trigger workflow manually or push to main
+3. Verify npm installation: `bunx forgewright --help`
 
 ---
 
