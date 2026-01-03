@@ -17,7 +17,7 @@
 
 ### Next Steps (Manual Actions Required)
 1. **Configure GitHub Secrets** (Settings → Secrets → Actions):
-   - `ANTHROPIC_API_KEY` - For AI-powered release analysis
+   - `OPENAI_API_KEY` - For AI-powered release analysis (gpt-4o)
    - `NPM_TOKEN` - For npm publishing (get from npmjs.com)
 2. Trigger workflow manually or push to main
 3. Verify npm installation: `bunx forgewright --help`
@@ -27,13 +27,13 @@
 ## Phase 1: Ship v0.1.0 (Launch)
 
 ### 1.1 Dogfood Release
-- [x] Run `bun run forgewright status` and verify it works (CLI works, 287 tests pass, needs API key for AI)
-- [ ] Run `bun run forgewright release --dry-run` to preview (BLOCKED: needs ANTHROPIC_API_KEY secret)
+- [x] Run `bun run forgewright status` and verify it works (CLI works, 295 tests pass, needs API key for AI)
+- [ ] Run `bun run forgewright release --dry-run` to preview (BLOCKED: needs OPENAI_API_KEY secret)
 - [ ] Create first real release using Forgewright itself (BLOCKED: needs secrets in GitHub)
 - [ ] Verify changelog is generated correctly (BLOCKED: needs secrets in GitHub)
 
 > **SECRETS NEEDED (configure in GitHub repo Settings > Secrets):**
-> - `ANTHROPIC_API_KEY` - For AI analysis
+> - `OPENAI_API_KEY` - For AI analysis (gpt-5.2)
 > - `NPM_TOKEN` - For npm publishing
 > - `GITHUB_TOKEN` - Already available via GitHub Actions
 >

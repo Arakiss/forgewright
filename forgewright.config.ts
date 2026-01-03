@@ -3,8 +3,8 @@ import { defineConfig } from "@forgewright/core";
 // Dogfooding: Forgewright releases itself
 export default defineConfig({
   ai: {
-    provider: "anthropic",
-    model: "claude-sonnet-4-20250514",
+    provider: "openai",
+    model: "gpt-5.2",
   },
 
   mode: "confirm",

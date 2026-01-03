@@ -17,12 +17,12 @@ export interface AIProviderConfig {
 
 const DEFAULT_MODELS: Record<AIProvider, string> = {
   anthropic: "claude-sonnet-4-20250514",
-  openai: "gpt-4o",
+  openai: "gpt-5.2",
   google: "gemini-2.0-flash-exp",
   xai: "grok-2-1212",
   mistral: "mistral-large-latest",
   ollama: "llama3.2",
-  "openai-compatible": "gpt-4o", // User must specify model for compatible providers
+  "openai-compatible": "gpt-5.2", // User must specify model for compatible providers
 };
 
 const API_KEY_ENV_VARS: Record<AIProvider, string> = {
