@@ -29,25 +29,25 @@
 - [x] Add CLI usage examples to README
 - [x] Verify all code examples work (CLI --help works, 287 tests pass)
 
-## Phase 2: AI-Editor Integration (Ultracite-style)
+## Phase 2: AI-Editor Integration (Ultracite-style) ✅ DONE
 
 ### 2.1 Cursor Rules
-- [ ] Create `forgewright rules cursor` command
-- [ ] Generate .cursorrules file with Forgewright conventions
-- [ ] Include release workflow guidance for Cursor
+- [x] Create `forgewright rules cursor` command
+- [x] Generate .cursorrules file with Forgewright conventions
+- [x] Include release workflow guidance for Cursor
 
 ### 2.2 Claude Code Integration
-- [ ] Create `forgewright rules claude` command
-- [ ] Generate CLAUDE.md file with Forgewright context
-- [ ] Include commands and workflow documentation
+- [x] Create `forgewright rules claude` command
+- [x] Generate CLAUDE.md file with Forgewright context
+- [x] Include commands and workflow documentation
 
 ### 2.3 GitHub Copilot
-- [ ] Create `forgewright rules copilot` command
-- [ ] Generate .github/copilot-instructions.md
+- [x] Create `forgewright rules copilot` command
+- [x] Generate .github/copilot-instructions.md
 
 ### 2.4 Universal Rules
-- [ ] Create `forgewright rules` (auto-detect editor)
-- [ ] Support --all flag to generate all rule files
+- [x] Create `forgewright rules` command
+- [x] Support `forgewright rules all` to generate all rule files
 
 ## Phase 3: Distribution
 

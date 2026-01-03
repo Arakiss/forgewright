@@ -4,6 +4,7 @@ import { parseArgs } from "node:util";
 import { init } from "./commands/init";
 import { preview } from "./commands/preview";
 import { release } from "./commands/release";
+import { rules } from "./commands/rules";
 import { status } from "./commands/status";
 import * as out from "./output";
 
@@ -20,6 +21,7 @@ ${out.bold("Commands:")}
   status      Check release readiness
   preview     Preview the next release changelog
   release     Create a new release
+  rules       Generate AI editor configuration files
 
 ${out.bold("Options:")}
   -h, --help     Show this help message
@@ -40,6 +42,11 @@ ${out.bold("Examples:")}
 
   ${out.dim("# Force release even if not ready")}
   forgewright release --force
+
+  ${out.dim("# Generate AI editor rules (Cursor, Claude Code, Copilot)")}
+  forgewright rules
+  forgewright rules cursor
+  forgewright rules claude
 `;
 
 async function main(): Promise<void> {
@@ -70,6 +77,7 @@ async function main(): Promise<void> {
     status,
     preview,
     release,
+    rules,
   };
 
   const handler = commands[command ?? ""];
