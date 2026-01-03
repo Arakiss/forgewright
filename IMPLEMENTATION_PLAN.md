@@ -8,10 +8,12 @@
 - [ ] Create first real release using Forgewright itself (BLOCKED: needs secrets in GitHub)
 - [ ] Verify changelog is generated correctly (BLOCKED: needs secrets in GitHub)
 
-> **SECRETS NEEDED:**
+> **SECRETS NEEDED (configure in GitHub repo Settings > Secrets):**
 > - `ANTHROPIC_API_KEY` - For AI analysis
 > - `NPM_TOKEN` - For npm publishing
 > - `GITHUB_TOKEN` - Already available via GitHub Actions
+>
+> **STATUS:** Code pushed to main. CI will run but needs secrets to complete.
 
 ### 1.2 Publish to npm (Automated via CI)
 - [x] Update package.json files for publishing
