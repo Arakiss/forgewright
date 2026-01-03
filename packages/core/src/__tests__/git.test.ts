@@ -1,8 +1,10 @@
 import { beforeAll, describe, expect, test } from "bun:test";
+import { resolve } from "node:path";
 import { type Commit, CommitSchema, Git, type Tag, TagSchema } from "../git";
 
 // Use the forgewright repo itself for testing
-const TEST_CWD = process.cwd();
+// Navigate from packages/core/src/__tests__/ up to repo root
+const TEST_CWD = resolve(import.meta.dir, "..", "..", "..", "..");
 
 describe("CommitSchema", () => {
   test("should accept valid commit", () => {
@@ -217,7 +219,7 @@ describe("Git additional methods", () => {
   let git: Git;
 
   beforeAll(() => {
-    git = new Git({ cwd: process.cwd() });
+    git = new Git({ cwd: TEST_CWD });
   });
 
   describe("getAllTags", () => {
