@@ -1,3 +1,5 @@
+> ⚠️ **Archived** — Release flows for LLM-assisted development are now handled natively by Claude Code and the release tooling in the modern AI-assisted terminal. Kept for history.
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/Arakiss/forgewright/main/.github/assets/logo.svg" alt="Forgewright" width="200" />
 </p>
